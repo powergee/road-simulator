@@ -104,12 +104,13 @@
 
     // Crate lane geometry
     function getLaneGeometry(points, width = 2, thick = 0.1) {
-      let [leftLanePoints, rightLanePoints] = createThickLine(points, width)
-      let leftLane = createThickLine(leftLanePoints, thick);
-      let rightLane = createThickLine(rightLanePoints, thick);
-      let leftLaneGeometry = getThickLineGeometry(leftLane);
-      let rightLaneGeometry = getThickLineGeometry(rightLane);
-      return [leftLaneGeometry, rightLaneGeometry];
+      // let [leftLanePoints, rightLanePoints] = createThickLine(points, width)
+      // let leftLane = createThickLine(leftLanePoints, thick);
+      // let rightLane = createThickLine(rightLanePoints, thick);
+      // let leftLaneGeometry = getThickLineGeometry(leftLanePoints);
+      // let rightLaneGeometry = getThickLineGeometry(rightLanePoints);
+      // return [leftLaneGeometry, rightLaneGeometry];
+      return getThickLineGeometry(createThickLine(points, thick))
     }
 
     // Get path function from segments
@@ -160,7 +161,7 @@
     let ground
     {
       const geometry = new PlaneGeometry(1000, 1000);
-      const material = new MeshPhongMaterial({ color: 0x101010, side: DoubleSide });
+      const material = new MeshPhongMaterial({ color: 0xffffff, side: DoubleSide });
       ground = new Mesh(geometry, material);
       ground.position.set(0, -0.1, 0)
       ground.lookAt(0, 1, 0)
@@ -182,17 +183,15 @@
       for (let t = 0; t < 1; t += 0.002) {
         points.push(lane(t))
       }
-      let [leftLaneGeometry, rightLaneGeometry] = getLaneGeometry(points, 40, 1.8);
-      let material = new MeshPhongMaterial({ color: 0xffff40, side: DoubleSide })
-      let leftLane = new Mesh(leftLaneGeometry, material);
-      let rightLane = new Mesh(rightLaneGeometry, material);
-      scene.add(leftLane);
-      scene.add(rightLane);
+      let laneGeometry = getLaneGeometry(points, 40, 1.8);
+      let material = new MeshPhongMaterial({ color: 0x080808, side: DoubleSide })
+      let laneMesh = new Mesh(laneGeometry, material);
+      scene.add(laneMesh);
     }
 
     // Define ambient light
     {
-      let light = new AmbientLight(0x202020); // soft white light
+      let light = new AmbientLight(0x808080); // soft white light
       scene.add(light);
     }
 
@@ -204,8 +203,8 @@
         for (let y = 0; y < 3; y++) {
           let light = new PointLight(
             0xffffff, // Color
-            1, // Intensity
-            600, // Distance (0=No limit)
+            0.11, // Intensity
+            0, // Distance (0=No limit)
             1 // Some factor
           )
           light.position.set(x * dist, height, y * dist)
